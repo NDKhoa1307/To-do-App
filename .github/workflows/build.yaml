@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Set build variant
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BUILD_BRANCH=$(if [[ "$BRANCH_NAME" == "master" ]]; then echo "master"; elif [[ "$BRANCH_NAME" == "develop" ]]; then echo "develop"; else echo ""; fi)
+          echo "BUILD_BRANCH=$BUILD_BRANCH" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up bun
+        uses: bunjs/setup-bun@v1
+
+      - name: Build server
+        working-directory: server
+        run: |
+          bun ci
+          bun run build:${{ env.BUILD_BRANCH }}
+
+      - name: Build client
+        working-directory: client
+        run: |
+          bun ci
+          bun run build:${{ env.BUILD_BRANCH }}
