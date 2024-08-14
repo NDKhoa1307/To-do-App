@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import createMongooseImport from './utils/db/create-mongoose-import';
 
-import 'dotenv/config';
+const env = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : `.env`;
 
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: '.env',
+            envFilePath: env,
             isGlobal: true,
         }),
-        MongooseModule.forRoot(process.env.MONGODB_URI),
+        createMongooseImport(new ConfigService()),
     ],
     controllers: [AppController],
     providers: [AppService],

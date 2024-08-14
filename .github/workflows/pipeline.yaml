@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  # Triggers pipeline on every update
+  # Todo: Implement CD on develop and master when AWS is ready
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Set build variant to be master on master branch,
+      # develop on develop branch and null on other
+      - name: Set build variant
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BUILD_BRANCH=$(if [[ "$BRANCH_NAME" == "master" ]]; then echo ":master"; elif [[ "$BRANCH_NAME" == "develop" ]]; then echo ":develop"; else echo ""; fi)
+          echo "BUILD_BRANCH=$BUILD_BRANCH" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Build & test server
+        working-directory: server
+        run: |
+          bun install
+          bun run test:cov
+          bun run build ${{ env.BUILD_BRANCH }}
+
+      - name: Build client
+        working-directory: client
+        run: |
+          bun install
+          bun run build ${{ env.BUILD_BRANCH }}
