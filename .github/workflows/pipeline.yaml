@@ -24,7 +24,7 @@ jobs:
       - name: Set build variant
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          BUILD_BRANCH=$(if [[ "$BRANCH_NAME" == "master" ]]; then echo "master"; elif [[ "$BRANCH_NAME" == "develop" ]]; then echo "develop"; else echo ""; fi)
+          BUILD_BRANCH=$(if [[ "$BRANCH_NAME" == "master" ]]; then echo ":master"; elif [[ "$BRANCH_NAME" == "develop" ]]; then echo ":develop"; else echo ""; fi)
           echo "BUILD_BRANCH=$BUILD_BRANCH" >> $GITHUB_ENV
 
       - name: Checkout
@@ -38,10 +38,10 @@ jobs:
         run: |
           bun install
           bun run test:cov
-          bun run build:${{ env.BUILD_BRANCH }}
+          bun run build ${{ env.BUILD_BRANCH }}
 
       - name: Build client
         working-directory: client
         run: |
           bun install
-          bun run build:${{ env.BUILD_BRANCH }}
+          bun run build ${{ env.BUILD_BRANCH }}
