@@ -36,12 +36,12 @@ jobs:
       - name: Build & test server
         working-directory: server
         run: |
-          bun ci
+          bun install
           bun run test:cov
           bun run build:${{ env.BUILD_BRANCH }}
 
       - name: Build client
         working-directory: client
         run: |
-          bun ci
+          bun install
           bun run build:${{ env.BUILD_BRANCH }}
