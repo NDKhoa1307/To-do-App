@@ -29,6 +29,11 @@
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "mongoose": "^8.5.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
@@ -67,12 +72,19 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/main.ts",
+      "!**/coverage/**",
+      "!**/dto/**",
+      "!**/schemas/**",
+      "!**/*.module.*",
+      "!**/create-mongoose-import.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
   },
   "trustedDependencies": [
-    "@nestjs/core"
+    "@nestjs/core",
+    "bcrypt"
   ]
 }
