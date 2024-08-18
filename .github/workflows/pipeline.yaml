@@ -38,10 +38,10 @@ jobs:
         run: |
           bun install
           bun run test:cov
-          bun run build ${{ env.BUILD_BRANCH }}
+          bun run build${{ env.BUILD_BRANCH }}
 
       - name: Build client
         working-directory: client
         run: |
           bun install
-          bun run build ${{ env.BUILD_BRANCH }}
+          bun run build${{ env.BUILD_BRANCH }}
